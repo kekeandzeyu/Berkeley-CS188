@@ -89,18 +89,65 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Similar code can check out https://csstudy.pages.dev/data-structures-and-algorithms-2.html#14-3-depth-first-search
+    stack = util.Stack()
+    marked = set()  # Since we cannot get the number of states, we use set to store the states that have been visited
+    start_state = problem.getStartState()
+    stack.push((start_state, []))
+
+    # Since this method only requires the path to the goal, we don't have to store the path to all states (nodes)
+    while not stack.isEmpty():
+        current_state, actions = stack.pop()
+
+        if problem.isGoalState(current_state):
+            return actions
+        
+        if current_state not in marked:
+            marked.add(current_state)
+            for successor, action, cost in problem.getSuccessors(current_state):
+                stack.push((successor, actions + [action]))
+
+    return []
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Similar code can check out https://csstudy.pages.dev/data-structures-and-algorithms-2.html#14-4-breadth-first-search
+    queue = util.Queue()
+    marked = set()
+    start_state = problem.getStartState()
+    queue.push((start_state, []))  
+    marked.add(start_state)
+
+    while not queue.isEmpty():
+        current_state, path = queue.pop()
+
+        if problem.isGoalState(current_state):
+            return path
+
+        for successor, action, cost in problem.getSuccessors(current_state):
+            if successor not in marked:
+                marked.add(successor)
+                queue.push((successor, path + [action]))
+
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Similar code can check out https://csstudy.pages.dev/artificial-intelligence.html#1-search
+    pq = util.PriorityQueue()
+    marked = set()
+    start_state = problem.getStartState()
+    pq.push((start_state, [], 0), 0) # (state, path, cost)
+
+    while not pq.isEmpty():
+        current_state, path, cost = pq.pop()
+
+        if problem.isGoalState(current_state):
+            return path
+
+        if current_state not in marked:
+            marked.add(current_state)
+            for successor, action, step_cost in problem.getSuccessors(current_state):
+                pq.push((successor, path + [action], cost + step_cost), cost + step_cost)
 
 def nullHeuristic(state, problem=None) -> float:
     """
